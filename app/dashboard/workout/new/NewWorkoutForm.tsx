@@ -19,12 +19,12 @@ function nowTime() {
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }
 
-export default function NewWorkoutForm() {
+export default function NewWorkoutForm({ initialDate }: { initialDate?: string }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const [name, setName] = useState("");
-  const [date, setDate] = useState(todayISO);
+  const [date, setDate] = useState(initialDate ?? todayISO);
   const [time, setTime] = useState(nowTime);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,7 +39,7 @@ export default function NewWorkoutForm() {
     startTransition(async () => {
       try {
         await createWorkout({ name, startedAt });
-        router.push("/dashboard");
+        router.push(`/dashboard?date=${date}`);
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);

@@ -59,7 +59,7 @@ export default function DashboardContent({
           {workouts.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-4 py-16 text-zinc-400 dark:text-zinc-500">
               <p className="text-sm">No workouts logged for this date.</p>
-              <Button onClick={() => router.push("/dashboard/workout/new")}>Log New Workout</Button>
+              <Button onClick={() => router.push(`/dashboard/workout/new?date=${format(date, "yyyy-MM-dd")}`)}>Log New Workout</Button>
             </div>
           ) : (
             <div className="space-y-4">
