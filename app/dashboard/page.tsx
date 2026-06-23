@@ -1,11 +1,28 @@
-"use client";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import { getWorkoutsForDate } from "@/data/workouts";
+import DashboardContent from "./DashboardContent";
 
-import dynamic from "next/dynamic";
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string }>;
+}) {
+  const { userId } = await auth();
 
-const DashboardContent = dynamic(() => import("./DashboardContent"), {
-  ssr: false,
-});
+  if (!userId) {
+    redirect("/sign-in");
+  }
 
-export default function DashboardPage() {
-  return <DashboardContent />;
+  const { date: dateParam } = await searchParams;
+  const selectedDate = dateParam ? new Date(dateParam) : new Date();
+
+  const workouts = await getWorkoutsForDate(userId, selectedDate);
+
+  return (
+    <DashboardContent
+      workouts={workouts}
+      selectedDate={selectedDate.toISOString()}
+    />
+  );
 }

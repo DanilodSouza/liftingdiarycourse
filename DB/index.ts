@@ -1,13 +1,25 @@
 import { drizzle } from "drizzle-orm/neon-http";
 
-const connectionString =
-  process.env.liftingdairycourse_DATABASE_URL ||
-  process.env.DATABASE_URL;
+let _db: ReturnType<typeof drizzle> | null = null;
 
-if (!connectionString) {
-  throw new Error("No database connection string found");
+function getDB() {
+  if (_db) return _db;
+
+  const connectionString =
+    process.env.DATABASE_URL ||
+    process.env.liftingdairycourse_DATABASE_URL ||
+    process.env.liftingdiarycourse_DATABASE_URL;
+
+  if (!connectionString) {
+    throw new Error("DATABASE_URL is not set");
+  }
+
+  _db = drizzle(connectionString);
+  return _db;
 }
 
-const DB = drizzle(connectionString);
-
-export { DB };
+export const DB = new Proxy({} as ReturnType<typeof drizzle>, {
+  get(_target, prop) {
+    return (getDB() as any)[prop];
+  },
+});
