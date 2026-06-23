@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Card,
   CardContent,
@@ -23,9 +26,11 @@ export default function DashboardContent({
 }: DashboardContentProps) {
   const router = useRouter();
   const date = new Date(selectedDate);
+  const [open, setOpen] = useState(false);
 
   function handleDateChange(newDate: Date | undefined) {
     if (!newDate) return;
+    setOpen(false);
     router.push(`/dashboard?date=${format(newDate, "yyyy-MM-dd")}`);
   }
 
@@ -35,20 +40,23 @@ export default function DashboardContent({
         Workout Dashboard
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-        <div className="flex flex-col gap-3">
-          <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-            Select Date
-          </p>
-          <Card className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 w-fit">
-            <CardContent className="p-3">
+      <div className="flex flex-col gap-6">
+        <div className="flex items-center gap-3">
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger render={
+              <Button variant="outline" className="gap-2 text-zinc-700 dark:text-zinc-300">
+                <CalendarIcon className="size-4" />
+                {format(date, "do MMM yyyy")}
+              </Button>
+            } />
+            <PopoverContent className="w-auto p-0" align="start">
               <Calendar
                 mode="single"
                 selected={date}
                 onSelect={handleDateChange}
               />
-            </CardContent>
-          </Card>
+            </PopoverContent>
+          </Popover>
         </div>
 
         <div className="flex flex-col gap-3">
