@@ -16,7 +16,11 @@ npm run build    # Production build
 npm run lint     # Run ESLint
 ```
 
-- /docs/ui.md 
+- /docs/ui.md
+- /docs/data-fetching.md
+- /docs/data-mutations.md
+- /docs/auth.md
+- /docs/server-components.md
 
 ## Architecture
 
