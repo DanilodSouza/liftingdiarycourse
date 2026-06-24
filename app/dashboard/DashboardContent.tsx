@@ -25,7 +25,8 @@ export default function DashboardContent({
   selectedDate,
 }: DashboardContentProps) {
   const router = useRouter();
-  const date = new Date(selectedDate);
+  const [year, month, day] = selectedDate.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
   const [open, setOpen] = useState(false);
 
   function handleDateChange(newDate: Date | undefined) {
@@ -36,15 +37,20 @@ export default function DashboardContent({
 
   return (
     <main className="flex-1 p-6 max-w-5xl mx-auto w-full">
-      <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-8">
-        Workout Dashboard
-      </h1>
+      <div className="flex items-center gap-4 mb-8">
+        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+          Workout Dashboard
+        </h1>
+        <Button variant="outline" onClick={() => router.push(`/dashboard/workout/new?date=${format(date, "yyyy-MM-dd")}`)}>
+          Log New Workout
+        </Button>
+      </div>
 
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-3">
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger render={
-              <Button variant="outline" className="gap-2 text-zinc-700 dark:text-zinc-300">
+              <Button variant="outline" className="gap-2">
                 <CalendarIcon className="size-4" />
                 {format(date, "do MMM yyyy")}
               </Button>
@@ -60,21 +66,21 @@ export default function DashboardContent({
         </div>
 
         <div className="flex flex-col gap-3">
-          <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+            <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
             Workouts for {format(date, "do MMM yyyy")}
           </p>
 
           {workouts.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-4 py-16 text-zinc-400 dark:text-zinc-500">
               <p className="text-sm">No workouts logged for this date.</p>
-              <Button onClick={() => router.push(`/dashboard/workout/new?date=${format(date, "yyyy-MM-dd")}`)}>Log New Workout</Button>
             </div>
           ) : (
             <div className="space-y-4">
               {workouts.map((workout) => (
                 <Card
                   key={workout.id}
-                  className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900"
+                  onClick={() => router.push(`/dashboard/workout/${workout.id}`)}
+                  className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 cursor-pointer hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors"
                 >
                   <CardHeader className="pb-4">
                     <div className="flex items-start justify-between">

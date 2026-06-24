@@ -2,12 +2,17 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import { createWorkout } from "@/actions/workouts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+function parseDateLocal(dateStr: string): Date {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
 
 function todayISO() {
   const d = new Date();
@@ -33,7 +38,7 @@ export default function NewWorkoutForm({ initialDate }: { initialDate?: string }
     setError(null);
 
     const [hours, minutes] = time.split(":").map(Number);
-    const startedAt = parseISO(date);
+    const startedAt = parseDateLocal(date);
     startedAt.setHours(hours, minutes, 0, 0);
 
     startTransition(async () => {
@@ -58,7 +63,7 @@ export default function NewWorkoutForm({ initialDate }: { initialDate?: string }
       <CardContent>
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
-            <Label htmlFor="name" className="text-zinc-700 dark:text-zinc-300">
+            <Label htmlFor="name">
               Workout Name
             </Label>
             <Input
@@ -72,7 +77,7 @@ export default function NewWorkoutForm({ initialDate }: { initialDate?: string }
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="date" className="text-zinc-700 dark:text-zinc-300">
+            <Label htmlFor="date">
               Date
             </Label>
             <Input
@@ -85,13 +90,13 @@ export default function NewWorkoutForm({ initialDate }: { initialDate?: string }
             />
             {date && (
               <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                {format(parseISO(date), "do MMM yyyy")}
+                {format(parseDateLocal(date), "do MMM yyyy")}
               </p>
             )}
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="time" className="text-zinc-700 dark:text-zinc-300">
+            <Label htmlFor="time">
               Start Time
             </Label>
             <Input

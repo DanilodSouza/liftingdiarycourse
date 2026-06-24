@@ -15,14 +15,17 @@ export default async function DashboardPage({
   }
 
   const { date: dateParam } = await searchParams;
-  const selectedDate = dateParam ? new Date(dateParam) : new Date();
+  const today = new Date();
+  const dateString = dateParam ?? `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  const [year, month, day] = dateString.split("-").map(Number);
+  const selectedDate = new Date(year, month - 1, day);
 
   const workouts = await getWorkoutsForDate(userId, selectedDate);
 
   return (
     <DashboardContent
       workouts={workouts}
-      selectedDate={selectedDate.toISOString()}
+      selectedDate={dateString}
     />
   );
 }
